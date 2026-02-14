@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Efectivo</title>
+
+<style>
+:root {
+    --bg: linear-gradient(135deg, #0D1B2A, #1D3557);
+    --card: #ffffff;
+    --dark: #000000;
+    --accent: #f59e0b;
+    --success: #10b981;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    padding: 20px;
+    color: var(--dark);
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.flex-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.money-item {
+    flex: 1 1 140px;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100px;
+    border: 2px solid rgba(255,255,255,0.4);
+    transition: 0.2s;
+}
+
+.money-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.money-item label {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.money-item input {
+    width: 80%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.item-total {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.section-total {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--success);
+}
+
+.grand-total {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    padding: 25px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    transition: 0.3s;
+}
+
+.reset-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #ef4444;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.reset-btn:hover {
+    background: #dc2626;
+}
+
+/* ==== COLORES BILLETES ==== */
+.b500 { background: #e9d5ff; }  /* morado pastel */
+.b200 { background: #fef3c7; }  /* amarillo pastel */
+.b100 { background: #dcfce7; }  /* verde pastel */
+.b50  { background: #ffedd5; }  /* naranja pastel */
+.b20  { background: #dbeafe; }  /* azul pastel */
+.b10  { background: #fee2e2; }  /* rojo pastel */
+.b5   { background: #f1f5f9; }  /* gris pastel */
+
+/* ==== MONEDAS ==== */
+.gold { background: linear-gradient(135deg, #fde68a, #facc15); }
+.copper { background: linear-gradient(135deg, #fcd34d, #b45309); }
+.copper-dark { background: linear-gradient(135deg, #fbbf24, #92400e); }
+
+@media(max-width:600px){
+    body {
+        padding: 10px;
+    }
+    .money-item {
+        flex: 1 1 45%;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="header">
+    <h1>CALCULADORA DE EFECTIVO</h1>
+    <select id="selectorIdioma" onchange="cambiarIdioma()">
+        <option value="es">Castellano</option>
+        <option value="va">Valenciano</option>
+        <option value="eu">Euskera</option>
+        <option value="gl">Gallego</option>
+    </select>
+</div>
+
+<div class="card">
+    <h2 id="tituloBilletes">Billetes</h2>
+    <div class="flex-grid" id="billetes"></div>
+    <div class="section-total" id="totalBilletes">Total Billetes: 0 €</div>
+</div>
+
+<div class="card">
+    <h2 id="tituloMonedas">Monedas</h2>
+    <div class="flex-grid" id="monedas"></div>
+    <div class="section-total" id="totalMonedas">Total Monedas: 0 €</div>
+</div>
+
+<div class="card">
+    <div class="grand-total" id="granTotal">TOTAL EFECTIVO: 0 €</div>
+    <button class="reset-btn" onclick="reiniciar()" id="botonReiniciar">Reiniciar</button>
+</div>
+
+</div>
+
+<script>
+// Idiomas
+const idiomas = {
+    es: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Total Billetes: ", totalMonedas:"Total Monedas: ", totalEfectivo:"TOTAL EFECTIVO: ", reiniciar:"Reiniciar"},
+    va: { billetes:"Bitllets", monedas:"Monedes", totalBilletes:"Total Bitllets: ", totalMonedas:"Total Monedes: ", totalEfectivo:"TOTAL EFECTIU: ", reiniciar:"Reiniciar"},
+    eu: { billetes:"Txekeak", monedas:"Monetak", totalBilletes:"Txekeen Guztira: ", totalMonedas:"Moneten Guztira: ", totalEfectivo:"Guztira: ", reiniciar:"Berrezarri"},
+    gl: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Total Billetes: ", totalMonedas:"Total Monedas: ", totalEfectivo:"TOTAL EFECTIVO: ", reiniciar:"Reiniciar"}
+};
+
+// Valores
+const valoresBilletes = [500,200,100,50,20,10,5];
+const valoresMonedas = [2,1,0.50,0.20,0.10,0.05,0.02,0.01];
+
+// Crear inputs
+function crearInputs(valores, contenedorId){
+    const contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML="";
+    valores.forEach(valor=>{
+        const div=document.createElement("div");
+        div.classList.add("money-item");
+        if(contenedorId==="billetes") div.classList.add("b"+valor);
+        if(contenedorId==="monedas"){
+            if(valor>=1) div.classList.add("gold");
+            else if(valor>=0.10) div.classList.add("copper");
+            else div.classList.add("copper-dark");
+        }
+        const label=document.createElement("label");
+        label.textContent=valor+" €";
+        const input=document.createElement("input");
+        input.type="text"; // para compatibilidad iOS
+        input.value="0";
+        input.dataset.valor=valor;
+        input.addEventListener("input",()=>{input.value=input.value.replace(/[^0-9.]/g,""); calcularTotales();});
+        const total=document.createElement("div");
+        total.classList.add("item-total");
+        total.textContent="0 €";
+        div.appendChild(label); div.appendChild(input); div.appendChild(total);
+        contenedor.appendChild(div);
+    });
+}
+
+// Calcular totales
+function calcularTotales(){
+    let totalBilletes=0,totalMonedas=0;
+    document.querySelectorAll("#billetes .money-item").forEach(item=>{
+        const input=item.querySelector("input");
+        const val=parseFloat(input.value)||0;
+        const itemTotal=val*input.dataset.valor;
+        item.querySelector(".item-total").textContent=itemTotal.toFixed(2)+" €";
+        totalBilletes+=itemTotal;
+    });
+    document.querySelectorAll("#monedas .money-item").forEach(item=>{
+        const input=item.querySelector("input");
+        const val=parseFloat(input.value)||0;
+        const itemTotal=val*input.dataset.valor;
+        item.querySelector(".item-total").textContent=itemTotal.toFixed(2)+" €";
+        totalMonedas+=itemTotal;
+    });
+    const granTotal=totalBilletes+totalMonedas;
+    const idioma=idiomas[document.getElementById("selectorIdioma").value];
+    document.getElementById("totalBilletes").textContent=idioma.totalBilletes+totalBilletes.toFixed(2)+" €";
+    document.getElementById("totalMonedas").textContent=idioma.totalMonedas+totalMonedas.toFixed(2)+" €";
+    const totalBox=document.getElementById("granTotal");
+    totalBox.textContent=idioma.totalEfectivo+granTotal.toFixed(2)+" €";
+    totalBox.style.transform="scale(1.05)";
+    setTimeout(()=>totalBox.style.transform="scale(1)",150);
+}
+
+// Reiniciar
+function reiniciar(){
+    document.querySelectorAll("input").forEach(input=>input.value="0");
+    calcularTotales();
+}
+
+// Cambiar idioma
+function cambiarIdioma(){
+    const idioma=idiomas[document.getElementById("selectorIdioma").value];
+    document.getElementById("tituloBilletes").textContent=idioma.billetes;
+    document.getElementById("tituloMonedas").textContent=idioma.monedas;
+    document.getElementById("botonReiniciar").textContent=idioma.reiniciar;
+    calcularTotales();
+}
+
+// Inicializar
+crearInputs(valoresBilletes,"billetes");
+crearInputs(valoresMonedas,"monedas");
+
+</script>
+</body>
+</html>
+
