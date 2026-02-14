@@ -20,10 +20,10 @@
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
             background: var(--bg);
-            height: 100vh;
+            height: auto;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
             color: var(--dark);
             padding: 10px;
         }
@@ -48,15 +48,18 @@
         }
 
         .main-layout {
-            flex: 1;
+            flex: none;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 15px;
             padding: 5px;
             min-height: 0;
+            height: auto;
         }
 
         .card {
+            height: auto;
+            margin-bottom: 10px;
             background: var(--card);
             border-radius: 12px;
             display: flex;
@@ -68,6 +71,7 @@
 
         /* ==== ESTILO DEL TÍTULO DESPLEGABLE ==== */
         .collapsible-header {
+            max-height: none;
             background: #f8fafc;
             padding: 12px;
             cursor: pointer;
@@ -163,18 +167,22 @@
         .copper-dark { background: #f1f5f9; }
 
         .footer-total {
+            position: sticky;
+            bottom: 10px;
+            z-index: 100;
             flex: 0 0 auto;
             background: linear-gradient(135deg, #10b981, #059669);
-            margin: 5px 10px 10px 10px;
+            margin: 10px 0;
             padding: 12px 25px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
+            width: 100%;
         }
 
-        #granTotal { font-size: 2.2rem; font-weight: 900; margin: 0; }
+        #granTotal { font-size: 1.8rem; font-weight: 900; margin: 0; }
 
         .reset-btn {
             background: rgba(255,255,255,0.2);
