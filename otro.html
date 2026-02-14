@@ -3,167 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Efectivo Pro</title>
+    <title>Calculadora Pro - Desplegable</title>
 
     <style>
         :root {
             --bg: linear-gradient(135deg, #0f172a, #1e293b);
             --card: #ffffff;
             --dark: #1e293b;
-            --accent: #f59e0b;
             --success: #10b981;
             --primary: #3b82f6;
         }
 
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: var(--bg);
-            min-height: 100vh;
-            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             color: var(--dark);
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: auto;
+            padding: 10px;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 15px;
         }
 
-        h1 {
-            color: white;
-            font-size: 2rem;
-            letter-spacing: -1px;
-            margin-bottom: 15px;
-        }
+        h1 { color: white; font-size: 1.2rem; margin: 0; }
 
         select {
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: 2px solid rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
             background: rgba(255,255,255,0.1);
             color: white;
-            font-size: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
             cursor: pointer;
-            outline: none;
         }
-        
-        select option { color: black; }
+
+        .main-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 5px;
+            min-height: 0;
+        }
 
         .card {
             background: var(--card);
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-
-        .card h2 {
-            margin: 0 0 20px 0;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .flex-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
-        }
-
-        .money-item {
-            border-radius: 18px;
-            padding: 15px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
+            padding: 0; /* Quitamos padding para que el título ocupe todo el ancho */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* ==== ESTILO DEL TÍTULO DESPLEGABLE ==== */
+        .collapsible-header {
+            background: #f8fafc;
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(0,0,0,0.05);
+            user-select: none;
+            border-bottom: 1px solid #eee;
         }
 
-        .money-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        .collapsible-header:hover { background: #f1f5f9; }
+
+        .collapsible-header h2 {
+            margin: 0;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .money-item label {
-            font-weight: 800;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
+        .arrow {
+            transition: transform 0.3s;
+            font-size: 0.8rem;
         }
 
-        .money-item input {
-            width: 80%;
-            padding: 10px;
-            border-radius: 10px;
+        .active .arrow { transform: rotate(180deg); }
+
+        .collapsible-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            transition: max-height 0.3s ease-out;
+        }
+
+        /* Cuando está cerrado */
+        .collapsed .collapsible-content {
+            display: none;
+        }
+
+        /* ==== FILA TIPO TABLA ==== */
+        .money-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 80px;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .money-row:hover {
+            transform: translateX(5px);
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .money-row label { font-weight: 800; font-size: 0.9rem; }
+
+        .money-row input {
+            width: 100%;
+            padding: 4px;
+            border-radius: 4px;
             border: 1px solid rgba(0,0,0,0.1);
             text-align: center;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            outline: none;
+            font-weight: bold;
+            font-size: 1rem;
         }
 
-        .money-item input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .item-total {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--dark);
-            opacity: 0.7;
-        }
+        .item-total { text-align: right; font-size: 0.85rem; font-weight: bold; }
 
         .section-total {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 2px dashed #eee;
+            margin: 8px 12px;
+            padding-top: 8px;
+            border-top: 2px dashed #cbd5e1;
             text-align: right;
-            font-size: 1.2rem;
             font-weight: 800;
             color: var(--primary);
+            font-size: 0.95rem;
         }
 
-        .grand-total-card {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            text-align: center;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
-        }
-
-        .grand-total-label { font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
-        
-        #granTotal {
-            font-size: 4rem;
-            font-weight: 900;
-            margin: 10px 0;
-            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .reset-btn {
-            margin-top: 20px;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid white;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .reset-btn:hover { background: white; color: #059669; }
-
-        /* ==== COLORES TEMÁTICOS ==== */
+        /* COLORES BILLETES */
         .b500 { background: #f3e8ff; color: #6b21a8; }
         .b200 { background: #fefce8; color: #854d0e; }
         .b100 { background: #f0fdf4; color: #166534; }
@@ -172,69 +157,112 @@
         .b10  { background: #fff1f2; color: #991b1b; }
         .b5   { background: #f8fafc; color: #334155; }
 
-        .gold { background: #fef9c3; border: 1px solid #fde047; }
-        .copper { background: #ffedd5; border: 1px solid #fed7aa; }
-        .copper-dark { background: #f1f5f9; border: 1px solid #e2e8f0; }
+        /* COLORES MONEDAS */
+        .gold { background: #fef9c3; }
+        .copper { background: #ffedd5; }
+        .copper-dark { background: #f1f5f9; }
 
-        @media(max-width:600px){
-            .flex-grid { grid-template-columns: 1fr 1fr; }
-            #granTotal { font-size: 2.5rem; }
+        .footer-total {
+            flex: 0 0 auto;
+            background: linear-gradient(135deg, #10b981, #059669);
+            margin: 5px 10px 10px 10px;
+            padding: 12px 25px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        #granTotal { font-size: 2.2rem; font-weight: 900; margin: 0; }
+
+        .reset-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1.5px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .reset-btn:hover { background: white; color: #059669; }
+
+        @media(max-width:700px){
+            .main-layout { grid-template-columns: 1fr; overflow-y: auto; }
+            body { height: auto; overflow-y: auto; }
         }
     </style>
 </head>
 
 <body>
-<div class="container">
 
-    <div class="header">
-        <h1>CALCULADORA EFECTIVO</h1>
-        <select id="selectorIdioma" onchange="cambiarIdioma()">
-            <option value="es">Castellano</option>
-            <option value="va">Valenciano</option>
-            <option value="eu">Euskera</option>
-            <option value="gl">Gallego</option>
-        </select>
+<div class="header">
+    <h1>💰 CALCULADORA COMPACTA</h1>
+    <select id="selectorIdioma" onchange="cambiarIdioma()">
+        <option value="es">Castellano</option>
+        <option value="va">Valenciano</option>
+        <option value="eu">Euskera</option>
+        <option value="gl">Gallego</option>
+    </select>
+</div>
+
+<div class="main-layout">
+    <div class="card" id="cardBilletes">
+        <div class="collapsible-header active" onclick="toggleSection('cardBilletes')">
+            <h2 id="tituloBilletes">Billetes</h2>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div id="billetes"></div>
+        </div>
+        <div class="section-total" id="totalBilletes">Billetes: 0.00 €</div>
     </div>
 
-    <div class="card">
-        <h2 id="tituloBilletes">💶 Billetes</h2>
-        <div class="flex-grid" id="billetes"></div>
-        <div class="section-total" id="totalBilletes">Total Billetes: 0.00 €</div>
+    <div class="card" id="cardMonedas">
+        <div class="collapsible-header active" onclick="toggleSection('cardMonedas')">
+            <h2 id="tituloMonedas">Monedas</h2>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div id="monedas"></div>
+        </div>
+        <div class="section-total" id="totalMonedas">Monedas: 0.00 €</div>
     </div>
+</div>
 
-    <div class="card">
-        <h2 id="tituloMonedas">🪙 Monedas</h2>
-        <div class="flex-grid" id="monedas"></div>
-        <div class="section-total" id="totalMonedas">Total Monedas: 0.00 €</div>
-    </div>
-
-    <div class="grand-total-card">
-        <div class="grand-total-label" id="labelTotal">TOTAL EFECTIVO</div>
+<div class="footer-total">
+    <div>
+        <div style="font-size: 0.75rem; opacity: 0.9; text-transform: uppercase;" id="labelTotal">TOTAL EFECTIVO</div>
         <div id="granTotal">0.00 €</div>
-        <button class="reset-btn" onclick="reiniciar()" id="botonReiniciar">Limpiar Todo</button>
     </div>
-
+    <button class="reset-btn" onclick="reiniciar()" id="botonReiniciar">Limpiar Todo</button>
 </div>
 
 <script>
 const idiomas = {
-    es: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Total Billetes: ", totalMonedas:"Total Monedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Limpiar Todo"},
-    va: { billetes:"Bitllets", monedas:"Monedes", totalBilletes:"Total Bitllets: ", totalMonedas:"Total Monedes: ", totalEfectivo:"TOTAL EFECTIU", reiniciar:"Reiniciar"},
-    eu: { billetes:"Txekeak", monedas:"Monetak", totalBilletes:"Txekeen Guztira: ", totalMonedas:"Moneten Guztira: ", totalEfectivo:"GUZTIRA", reiniciar:"Berrezarri"},
-    gl: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Total Billetes: ", totalMonedas:"Total Monedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Reiniciar"}
+    es: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Billetes: ", totalMonedas:"Monedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Limpiar Todo"},
+    va: { billetes:"Bitllets", monedas:"Monedes", totalBilletes:"Bitllets: ", totalMonedas:"Monedes: ", totalEfectivo:"TOTAL EFECTIU", reiniciar:"Reiniciar"},
+    eu: { billetes:"Txekeak", monedas:"Monetak", totalBilletes:"Txekeak: ", totalMonedas:"Monetak: ", totalEfectivo:"GUZTIRA", reiniciar:"Berrezarri"},
+    gl: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Billetes: ", totalMonedas:"Monedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Reiniciar"}
 };
 
 const valoresBilletes = [500,200,100,50,20,10,5];
 const valoresMonedas = [2,1,0.50,0.20,0.10,0.05,0.02,0.01];
 
+// Función para abrir/cerrar secciones
+function toggleSection(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('collapsed');
+    el.querySelector('.collapsible-header').classList.toggle('active');
+}
+
 function crearInputs(valores, contenedorId){
     const contenedor = document.getElementById(contenedorId);
-    contenedor.innerHTML="";
     valores.forEach(valor=>{
         const div=document.createElement("div");
-        div.classList.add("money-item");
+        div.className = "money-row";
         
-        // Asignar clases de color
         if(contenedorId==="billetes") div.classList.add("b"+valor);
         else {
             if(valor>=1) div.classList.add("gold");
@@ -243,21 +271,19 @@ function crearInputs(valores, contenedorId){
         }
 
         const label=document.createElement("label");
-        label.textContent= valor < 1 ? (valor*100).toFixed(0) + " cts" : valor + " €";
+        label.textContent= valor < 1 ? (valor*100).toFixed(0) + "c" : valor + "€";
         
         const input=document.createElement("input");
         input.type="number";
-        input.inputMode="numeric"; // Mejor teclado en móvil
+        input.inputMode="numeric";
         input.placeholder="0";
         input.dataset.valor=valor;
         
-        // UX: Limpiar al hacer click
         input.addEventListener("focus", () => { if(input.value == 0) input.value = ""; });
-        input.addEventListener("blur", () => { if(input.value == "") input.value = 0; });
         input.addEventListener("input", calcularTotales);
 
         const total=document.createElement("div");
-        total.classList.add("item-total");
+        total.className = "item-total";
         total.textContent="0.00 €";
         
         div.appendChild(label); 
@@ -270,32 +296,22 @@ function crearInputs(valores, contenedorId){
 function calcularTotales(){
     let totalB=0, totalM=0;
     
-    document.querySelectorAll("#billetes .money-item").forEach(item=>{
-        const input=item.querySelector("input");
+    document.querySelectorAll("#billetes .money-row input").forEach(input=>{
         const sub = (parseFloat(input.value)||0) * parseFloat(input.dataset.valor);
-        item.querySelector(".item-total").textContent=sub.toFixed(2)+" €";
-        totalB+=sub;
+        input.nextElementSibling.textContent = sub.toFixed(2) + " €";
+        totalB += sub;
     });
 
-    document.querySelectorAll("#monedas .money-item").forEach(item=>{
-        const input=item.querySelector("input");
+    document.querySelectorAll("#monedas .money-row input").forEach(input=>{
         const sub = (parseFloat(input.value)||0) * parseFloat(input.dataset.valor);
-        item.querySelector(".item-total").textContent=sub.toFixed(2)+" €";
-        totalM+=sub;
+        input.nextElementSibling.textContent = sub.toFixed(2) + " €";
+        totalM += sub;
     });
 
-    const granTotal = totalB + totalM;
     const lang = idiomas[document.getElementById("selectorIdioma").value];
-    
     document.getElementById("totalBilletes").textContent = lang.totalBilletes + totalB.toFixed(2) + " €";
     document.getElementById("totalMonedas").textContent = lang.totalMonedas + totalM.toFixed(2) + " €";
-    
-    const displayTotal = document.getElementById("granTotal");
-    displayTotal.textContent = granTotal.toFixed(2) + " €";
-    
-    // Animación feedback
-    displayTotal.style.transform = "scale(1.1)";
-    setTimeout(() => displayTotal.style.transform = "scale(1)", 100);
+    document.getElementById("granTotal").textContent = (totalB + totalM).toFixed(2) + " €";
 }
 
 function reiniciar(){
@@ -305,14 +321,13 @@ function reiniciar(){
 
 function cambiarIdioma(){
     const lang = idiomas[document.getElementById("selectorIdioma").value];
-    document.getElementById("tituloBilletes").textContent = "💶 " + lang.billetes;
-    document.getElementById("tituloMonedas").textContent = "🪙 " + lang.monedas;
+    document.getElementById("tituloBilletes").textContent = lang.billetes;
+    document.getElementById("tituloMonedas").textContent = lang.monedas;
     document.getElementById("labelTotal").textContent = lang.totalEfectivo;
     document.getElementById("botonReiniciar").textContent = lang.reiniciar;
     calcularTotales();
 }
 
-// Iniciar
 crearInputs(valoresBilletes,"billetes");
 crearInputs(valoresMonedas,"monedas");
 </script>
