@@ -206,7 +206,7 @@
 <body>
 
 <div class="header">
-    <h1>CALCULADORA EFECTIVO</h1>
+    <h1 id="mainTitle">CALCULADORA EFECTIVO</h1>
     <select id="selectorIdioma" onchange="cambiarIdioma()">
         <option value="es">Castellano</option>
         <option value="va">Valenciano</option>
@@ -249,10 +249,10 @@
 
 <script>
 const idiomas = {
-    es: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Billetes: ", totalMonedas:"Monedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Limpiar Todo"},
-    va: { billetes:"Bitllets", monedas:"Monedes", totalBilletes:"Bitllets: ", totalMonedas:"Monedes: ", totalEfectivo:"TOTAL EFECTIU", reiniciar:"Reiniciar"},
-    eu: { billetes:"Txekeak", monedas:"Monetak", totalBilletes:"Txekeak: ", totalMonedas:"Monetak: ", totalEfectivo:"GUZTIRA", reiniciar:"Berrezarri"},
-    gl: { billetes:"Billetes", monedas:"Monedas", totalBilletes:"Billetes: ", totalMonedas:"Monedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Reiniciar"}
+    es: { titulo:"CALCULADORA EFECTIVO", billetes:"Billetes", monedas:"Monedas", totalBilletes:"Billetes: ", totalMonedas:"Monedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Limpiar Todo"},
+    va: { titulo:"CALCULADORA D'EFECTIU", billetes:"Bitllets", monedas:"Monedes", totalBilletes:"Bitllets: ", totalMonedas:"Monedes: ", totalEfectivo:"TOTAL EFECTIU", reiniciar:"Reiniciar"},
+    eu: { titulo: "ESKUDIRUAREN KALKULAGAILUA", billetes:"Txekeak", monedas:"Monetak", totalBilletes:"Txekeak: ", totalMonedas:"Monetak: ", totalEfectivo:"GUZTIRA", reiniciar:"Berrezarri"},
+    gl: { titulo: "CALCULADORA DE DIÑEIRO", billetes:"Billetes", monedas:"Moedas", totalBilletes:"Billetes: ", totalMonedas:"Moedas: ", totalEfectivo:"TOTAL EFECTIVO", reiniciar:"Reiniciar"}
 };
 
 const valoresBilletes = [500,200,100,50,20,10,5];
@@ -329,6 +329,7 @@ function reiniciar(){
 
 function cambiarIdioma(){
     const lang = idiomas[document.getElementById("selectorIdioma").value];
+    document.getElementById("mainTitle").textContent = lang.titulo;
     document.getElementById("tituloBilletes").textContent = lang.billetes;
     document.getElementById("tituloMonedas").textContent = lang.monedas;
     document.getElementById("labelTotal").textContent = lang.totalEfectivo;
